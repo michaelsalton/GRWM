@@ -1,0 +1,24 @@
+# Build
+build/
+out/
+cmake-build-*/
+CMakeUserPresets.json
+
+# IDE
+.vs/
+.vscode/
+*.user
+*.suo
+*.sln
+*.vcxproj*
+.idea/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Output artifacts
+*.bin
+*.ply
+
+.claude/
