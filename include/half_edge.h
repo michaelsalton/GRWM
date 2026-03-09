@@ -13,12 +13,16 @@ struct HalfEdge {
 };
 
 struct HalfEdgeMesh {
-    std::vector<HalfEdge> half_edges;
-    uint32_t edge_count = 0;
+    std::vector<HalfEdge> half_edges;  // 3 per face (he[3f+0], he[3f+1], he[3f+2])
+    uint32_t edge_count = 0;           // number of unique undirected edges
 
-    // Maps for GPU upload
-    std::vector<uint32_t> edge_to_halfedge;
-    std::vector<uint32_t> edge_to_face;
+    // Flat arrays for GPU upload (derived from half_edges)
+    std::vector<uint32_t> he_opposite;    // [3F] opposite half-edge index per half-edge
+    std::vector<uint32_t> he_face;        // [3F] face index per half-edge
+    std::vector<uint32_t> face_edges;     // [3F] edge index per half-edge (face f uses edges at [3f..3f+2])
+
+    // Per unique-edge data
+    std::vector<uint32_t> edge_he;        // [E] one half-edge index per unique edge
 };
 
 // Build half-edge structure from triangle index buffer.
