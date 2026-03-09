@@ -21,9 +21,9 @@ find_package(CUDAToolkit REQUIRED)
 add_library(cuda_preprocess_lib STATIC
     src/mesh_loader.cpp
     src/half_edge.cpp
-    src/stage1_curvature.cu
-    src/stage2_features.cu
-    src/stage3_slots.cu
+    src/curvature.cu
+    src/features.cu
+    src/slots.cu
     src/validate.cu
     src/visualize.cpp
 )
