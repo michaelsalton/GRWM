@@ -19,7 +19,27 @@ __global__ void ComputeFaceNormals(
     uint32_t fid = blockIdx.x * blockDim.x + threadIdx.x;
     if (fid >= face_count) return;
 
-    // TODO: compute face normal via cross product of two edge vectors
+    uint3 f = faces[fid];
+    float3 v0 = positions[f.x];
+    float3 v1 = positions[f.y];
+    float3 v2 = positions[f.z];
+
+    float3 e1 = make_sub(v1, v0);
+    float3 e2 = make_sub(v2, v0);
+
+    float3 n = cross3(e1, e2);
+    float len = length3(n);
+
+    if (len > 1e-10f) {
+        float inv = 1.0f / len;
+        n.x *= inv;
+        n.y *= inv;
+        n.z *= inv;
+    } else {
+        n = make_float3(0.0f, 0.0f, 0.0f);
+    }
+
+    face_normals[fid] = n;
 }
 
 __global__ void DetectFeatureEdges(
@@ -64,7 +84,11 @@ __global__ void ReduceEdgeFlagsToFaces(
     uint32_t fid = blockIdx.x * blockDim.x + threadIdx.x;
     if (fid >= face_count) return;
 
-    // TODO: set face flag to 1 if any of its 3 edges is flagged
+    uint32_t e0 = face_edges[fid * 3 + 0];
+    uint32_t e1 = face_edges[fid * 3 + 1];
+    uint32_t e2 = face_edges[fid * 3 + 2];
+
+    face_flags[fid] = (edge_flags[e0] | edge_flags[e1] | edge_flags[e2]);
 }
 
 std::vector<uint8_t> detect_feature_edges(
